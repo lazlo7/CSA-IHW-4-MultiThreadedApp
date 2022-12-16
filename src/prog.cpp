@@ -14,12 +14,12 @@ public:
     Department() {
         id = nextId++;
         // Initialize department mutex.
-        pthread_mutex_init(&mutex, NULL);
+        pthread_mutex_init(&department_mutex, NULL);
     }
 
     ~Department() {
         // Destroy department mutex.
-        pthread_mutex_destroy(&mutex);
+        pthread_mutex_destroy(&department_mutex);
     }
 
     int getId() const {
@@ -28,7 +28,7 @@ public:
 
     void serveCustomer(int customer_id) {
         // Lock department mutex.
-        pthread_mutex_lock(&mutex);
+        pthread_mutex_lock(&department_mutex);
 
         // Lock cout mutex.
         pthread_mutex_lock(&cout_mutex);
@@ -46,7 +46,7 @@ public:
         pthread_mutex_unlock(&cout_mutex);
 
         // Unlock department mutex.
-        pthread_mutex_unlock(&mutex);
+        pthread_mutex_unlock(&department_mutex);
     }
 
 private:
@@ -54,7 +54,7 @@ private:
     static int nextId;
 
     // Mutex for department queue.
-    pthread_mutex_t mutex;
+    pthread_mutex_t department_mutex;
 };
 
 int Department::nextId = 1;
