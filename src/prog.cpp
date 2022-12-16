@@ -153,11 +153,21 @@ void* startShopping(void* args) {
 // The input string looks like this: <department_id1><department_id2>...<department_idn>
 // For example: 123 means the customer wants to visit departments 1, 2, and 3
 Customer parseCustomer(const std::string& input) {
+    if (input.empty()) {
+        std::cout << "[ERROR] Department queue cannot be empty" << std::endl;
+        exit(1);
+    }
+
     Customer customer;
     for (int i = 0; i < input.size(); i++) {
         int department_id = input[i] - '0';
+        if (department_id < 1 || department_id > 3) {
+            std::cout << "[ERROR] Invalid department id (expected a number between 1 and 3): " << (char)(department_id + '0') << std::endl;
+            exit(1);
+        }
         customer.enqueue(department_id);
     }
+
     return customer;
 }
 
@@ -171,6 +181,11 @@ std::vector<Customer> parseCustomersFromInput() {
     int num_customers;
     std::cout << "Enter the number of customers: ";
     std::cin >> num_customers;
+
+    if (std::cin.fail()) {
+        std::cout << "[ERROR] Expected integer" << std::endl;
+        exit(1);
+    }
 
     for (int i = 0; i < num_customers; i++) {
         std::string input;
