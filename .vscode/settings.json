@@ -1,8 +1,11 @@
 {
     "cSpell.words": [
+        "мьютекса",
         "мьютексы",
         "синхропримитивы",
-        "POSIX"
+        "cout",
+        "POSIX",
+        "pthread"
     ],
     "clang-format.style": "file",
     "clang-format.fallbackStyle": "Chromium"
