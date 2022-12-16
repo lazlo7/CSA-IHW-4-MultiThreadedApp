@@ -22,6 +22,10 @@ public:
         pthread_mutex_destroy(&mutex);
     }
 
+    int getId() const {
+        return id;
+    }
+
     void serveCustomer(int customer_id) {
         // Lock cout mutex.
         pthread_mutex_lock(&cout_mutex);
@@ -67,8 +71,8 @@ public:
 
     void enqueue(const Department& d) {
         department_queue.push(d);
-
     }
+
 private:
     static int nextId;    
 };
@@ -91,7 +95,28 @@ void* startShopping(void* args) {
     while (!customer->department_queue.empty()) {
         Department department = customer->department_queue.front();
         customer->department_queue.pop();
+
+        // Lock cout mutex.
+        pthread_mutex_lock(&cout_mutex);
+        std::cout << "[Customer #" 
+                  << customer->id 
+                  << "] Going to department #" 
+                  << department.getId() 
+                  << std::endl;
+        // Unlock cout mutex.
+        pthread_mutex_unlock(&cout_mutex);
+
         department.serveCustomer(customer->id);
+
+        // Lock cout mutex.
+        pthread_mutex_lock(&cout_mutex);
+        std::cout << "[Customer #" 
+                  << customer->id 
+                  << "] Returning from department #" 
+                  << department.getId() 
+                  << std::endl;
+        // Unlock cout mutex.
+        pthread_mutex_unlock(&cout_mutex);
     }
 
     // Lock cout mutex.
