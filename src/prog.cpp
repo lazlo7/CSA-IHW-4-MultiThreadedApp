@@ -18,7 +18,7 @@ public:
     }
 
     ~Department() {
-        // Destroy department mutex.
+        // Destroy department mutex in destructor.
         pthread_mutex_destroy(&department_mutex);
     }
 
@@ -28,6 +28,7 @@ public:
 
     void serveCustomer(int customer_id) {
         // Lock department mutex.
+        // The next customer can only be served after the current customer is done.
         pthread_mutex_lock(&department_mutex);
 
         // Lock cout mutex.
@@ -45,15 +46,17 @@ public:
         // Unlock cout mutex.
         pthread_mutex_unlock(&cout_mutex);
 
-        // Unlock department mutex.
+        // Unlock department mutex -> next customer can be served.
         pthread_mutex_unlock(&department_mutex);
     }
 
 private:
+    // Department's id.
     int id;
     static int nextId;
 
-    // Mutex for department queue.
+    // Mutex for department queue, made to be exclusive to each department
+    // so that every department has its own queue.
     pthread_mutex_t department_mutex;
 };
 
@@ -64,7 +67,10 @@ int Department::nextId = 1;
 // If the department is busy, the customer waits joins the end of the queue.
 class Customer {
 public:
+    // Customer's id.
     int id;
+
+    // Queue of departments the customer wants to visit.
     std::queue<int> department_queue;
 
     Customer() {
@@ -81,6 +87,7 @@ private:
 
 int Customer::nextId = 1;
 
+// All 3 departments in the store.
 static Department department1, department2, department3; 
 
 Department& departmentFromId(int id) {
@@ -191,11 +198,13 @@ int main(int argc, char** argv) {
     }
 
     // Initialize cout mutex.
+    // Needed to print information about customers and departments in a thread-safe manner.
     pthread_mutex_init(&cout_mutex, NULL);
 
     std::vector<pthread_t> customer_threads(customers.size());
     // Create customer threads and start shopping.
     for (int i = 0; i < customers.size(); i++) {
+        // &customer[i]: passing a customer to startShopping function.
         pthread_create(&customer_threads[i], NULL, startShopping, &customers[i]);
     }
 
