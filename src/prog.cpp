@@ -65,10 +65,6 @@ public:
         id = nextId++;
     }
 
-    int getId() {
-        return id;
-    }
-
     void enqueue(const Department& d) {
         department_queue.push(d);
 
