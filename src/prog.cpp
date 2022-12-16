@@ -27,24 +27,30 @@ public:
     }
 
     void serveCustomer(int customer_id) {
+        pthread_mutex_lock(&cout_mutex);
+        std::cout << "[Department #" << id << "] Customer #" << customer_id << " arrived" << std::endl;
+        pthread_mutex_unlock(&cout_mutex);
+
+        // Lock department mutex.
+        pthread_mutex_lock(&mutex);
+
         // Lock cout mutex.
         pthread_mutex_lock(&cout_mutex);
         std::cout << "[Department #" << id << "] Serving customer #" << customer_id << std::endl;
         // Unlock cout mutex.
         pthread_mutex_unlock(&cout_mutex);
 
-        // Lock department mutex.
-        pthread_mutex_lock(&mutex);
         // Simulate customer service (1 second sleep).
         sleep(1);
-        // Unlock department mutex.
-        pthread_mutex_unlock(&mutex);
 
         // Lock cout mutex.
         pthread_mutex_lock(&cout_mutex);
         std::cout << "[Department #" << id << "] Finished serving customer #" << customer_id << std::endl;
         // Unlock cout mutex.
         pthread_mutex_unlock(&cout_mutex);
+
+        // Unlock department mutex.
+        pthread_mutex_unlock(&mutex);
     }
 
 private:
