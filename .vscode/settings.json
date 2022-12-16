@@ -3,5 +3,7 @@
         "мьютексы",
         "синхропримитивы",
         "POSIX"
-    ]
+    ],
+    "clang-format.style": "file",
+    "clang-format.fallbackStyle": "Chromium"
 }
